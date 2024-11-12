@@ -1,45 +1,123 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
-    import { supabase } from '$lib/supabaseClient'; // Make sure this is properly set up
-  
-    let puzzleNumber = 4;  // Static for now, could be dynamic if needed
-    let puzzleDate = '';
-    let puzzleContent = '';
-    let guessesRemaining = 4;
-    let isCorrect: boolean | null = null;
-    let userGuess = '';
-  
-    // Fetch puzzle details from Supabase
-    onMount(async () => {
-      const { data, error } = await supabase
-        .from('questions')  // Replace 'puzzles' with your actual table name
-        .select('*')
-        .eq('question_id', puzzleNumber) // Add any specific filtering condition you need
-        .single();  // Use .single() if you expect only one result
-  
-      if (error) {
-        console.error('Error fetching puzzle:', error);
-      } else if (data) {
-        puzzleDate = data.release_dt;
-        if (typeof data.puzzle_data === 'string') {
+  import { onMount } from 'svelte';
+  import { supabase } from '$lib/supabaseClient'; // Ensure this is properly set up
+
+  let puzzleNumber = 4; // Static for now, could be dynamic if needed
+  let puzzleDate = '';
+  let puzzleContent = '';
+  let guessesRemaining = 4;
+  let isCorrect: boolean | null = null;
+  let userGuess = '';
+  let isLoading = false;  // Loading state for fetching data
+
+  // Function to fetch puzzle details from Supabase
+  async function fetchPuzzle() {
+    isLoading = true;  // Set loading to true before fetching
+    const { data, error } = await supabase
+      .from('questions')  // Replace 'questions' with your actual table name
+      .select('*')
+      .eq('question_id', puzzleNumber)  // Add any specific filtering condition you need
+      .single();  // Use .single() if you expect only one result
+
+    if (error) {
+      console.error('Error fetching puzzle:', error);
+    } else if (data) {
+      puzzleDate = data.release_dt;
+      if (typeof data.puzzle_data === 'string') {
         // If it's a string (JSON format), parse it
         const parsedContent = JSON.parse(data.puzzle_data);
-        puzzleContent = parsedContent.question; // Extract 'question' field
+        puzzleContent = parsedContent.question;  // Extract 'question' field
       } else {
         // If it's already an object, just access the 'question' field
         puzzleContent = data.puzzle_data.question;
+      }
     }
+    isLoading = false;  // Set loading to false after fetching
+  }
+
+  // Fetch the initial puzzle on page load
+  onMount(fetchPuzzle);
+
+  // Placeholder logic for puzzle validation
+  function submitGuess() {
+    if (userGuess.trim() === "") return;
+    isCorrect = userGuess === "correct answer"; // Replace with actual answer validation
+    guessesRemaining--;
+    userGuess = '';
+  }
+
+  // Function to handle next/previous question
+  function navigateQuestion(direction: 'next' | 'previous') {
+    if (direction === 'next') {
+      puzzleNumber += 1; // Increment to the next question number
+    } else if (direction === 'previous') {
+      puzzleNumber = Math.max(1, puzzleNumber - 1); // Decrement to the previous question, ensuring it's not less than 1
     }
-  });
-  
-    // Placeholder logic for puzzle validation
-    function submitGuess() {
-      if (userGuess.trim() === "") return;
-      isCorrect = userGuess === "correct answer"; // Replace with actual answer validation
-      guessesRemaining--;
-      userGuess = '';
-    }
-  </script>
+    fetchPuzzle(); // Refetch puzzle data for the updated puzzle number
+  }
+</script>
+
+<!-- Header -->
+<header>
+  <div class="header-left">
+    <img src="/images/puzzle.jpg" alt="Client Logo" height="40" />
+    <a href="#">What's this?</a>
+    <a href="#">All puzzles</a>
+  </div>
+  <a href="#" class="login-button">Login</a>
+</header>
+
+<!-- Main content -->
+<div class="page-container">
+  <div class="puzzle-header">
+    <!-- Buttons for navigating to the previous and next questions -->
+    <button on:click={() => navigateQuestion('previous')}>&lt;</button>
+    <h2>PUZZLE {puzzleNumber}</h2>
+    <button on:click={() => navigateQuestion('next')}>&gt;</button>
+  </div>
+  <p>{puzzleDate}</p>
+
+  <div class="puzzle-box">
+      <div class="puzzle-question">
+          {#if isLoading}
+              <p>Loading...</p>  <!-- Show loading text while fetching -->
+          {:else}
+              {puzzleContent}
+          {/if}
+      </div>
+  </div>
+
+  <div class="input-container">
+      <input
+          type="text"
+          placeholder="Enter your answer"
+          bind:value={userGuess}
+      />
+      <button class="submit-btn" on:click={submitGuess}>Submit</button>
+
+      {#if isCorrect === true}
+          <p class="feedback correct">Correct!</p>
+      {:else if isCorrect === false && guessesRemaining > 0}
+          <p class="feedback incorrect">Incorrect, {guessesRemaining} guesses remaining.</p>
+      {:else if guessesRemaining <= 0}
+          <p class="feedback incorrect">No more guesses. Try again tomorrow!</p>
+      {/if}
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-left">
+      <p>Logo</p>
+  </div>
+  <div class="footer-links">
+      <a href="#">About Us</a>
+      <a href="#">Link two</a>
+      <a href="#">Link three</a>
+      <a href="#">Link four</a>
+  </div>
+</footer>
+
   
   <style>
     /* General styling */
@@ -186,61 +264,12 @@
       text-decoration: none;
       color: #333;
     }
+
+    /* Logo resizing */
+.header-left img {
+  height: 40px; /* Adjust this value for the desired height */
+  width: auto;  /* Keep the aspect ratio intact */
+  max-width: 100%;  /* Prevent the logo from being larger than the container */
+}
   </style>
-  
-  <!-- Header -->
-  <header>
-    <div class="header-left">
-      <img src="path/to/logo.png" alt="Client Logo" height="40" />
-      <a href="#">What's this?</a>
-      <a href="#">All puzzles</a>
-    </div>
-    <a href="#" class="login-button">Login</a>
-  </header>
-  
-  <!-- Main content -->
-  <div class="page-container">
-    <div class="puzzle-header">
-      <span>&lt;</span>
-      <h2>PUZZLE {puzzleNumber}</h2>
-      <span>&gt;</span>
-    </div>
-    <p>{puzzleDate}</p>
-  
-    <div class="puzzle-box">
-      <div class="puzzle-question">
-        {puzzleContent}
-      </div>
-    </div>
-  
-    <div class="input-container">
-      <input
-        type="text"
-        placeholder="Enter your answer"
-        bind:value={userGuess}
-      />
-      <button class="submit-btn" on:click={submitGuess}>Submit</button>
-  
-      {#if isCorrect === true}
-        <p class="feedback correct">Correct!</p>
-      {:else if isCorrect === false && guessesRemaining > 0}
-        <p class="feedback incorrect">Incorrect, {guessesRemaining} guesses remaining.</p>
-      {:else if guessesRemaining <= 0}
-        <p class="feedback incorrect">No more guesses. Try again tomorrow!</p>
-      {/if}
-    </div>
-  </div>
-  
-  <!-- Footer -->
-  <footer>
-    <div class="footer-left">
-      <p>Logo</p>
-    </div>
-    <div class="footer-links">
-      <a href="#">About Us</a>
-      <a href="#">Link two</a>
-      <a href="#">Link three</a>
-      <a href="#">Link four</a>
-    </div>
-  </footer>
   

@@ -29,7 +29,7 @@
     };
   
     const deleteUser = async (id) => {
-      const { data, error: deleteError } = await supabase.from('users').delete().eq('id', id);
+      const { data, error: deleteError } = await supabase.from('users').delete().eq('username', id);
       if (deleteError) {
         error = deleteError.message;
       } else {
@@ -126,10 +126,10 @@
   <div class="card">
     <h3>Users</h3>
     <div class="list">
-      {#each users as user (user.id)}
+      {#each users as user (user.username)}
         <div class="list-item">
-          <span>{user.email}</span>
-          <button on:click={() => deleteUser(user.id)}>Delete</button>
+          <span>{user.username}</span>
+          <button on:click={() => deleteUser(user.username)}>Delete</button>
         </div>
       {/each}
     </div>
