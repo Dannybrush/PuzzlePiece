@@ -1,98 +1,70 @@
+
+
 <script>
-    import Modal from '$lib/Modal.svelte';
+  // Team data array
+  const teamMembers = [
+    {
+      name: 'Daniel Broomhead',
+      role: 'Lead Code Monkey',
+      image: '/images/Dan- Codemonkey.jpg', // add a relevant image path
+      bio: 'Dan is a poor abused slave to the machine who has to do all Joe\'s bidding at his beck and Call, on demand.',
+      extendedBio: 'Dan is actually the real mastermind behind all this'
+    },
+    {
+      name: 'Joseph Sykes',
+      role: 'Big Brain Extraordinaire',
+      image: '/images/Joe_Bremont.jpg',
+      bio: 'Joe is the big boss, the money man and the ideas guys',
+      extendedBio: 'although he does need some help solving his own puzzles'
+    },
+    {
+      name: 'Lissy Haig-Thomas',
+      role: 'Senior Consultant',
+      image: '/images/Lissy-Austria.png',
+      bio: 'Lissy is just a f*cking genius who saves the day',
+      extendedBio: 'she also knows everything'
+    }
+    // Add more team members as needed
+  ];
+
+// State to track which team member's bio is expanded
+let expandedMember = -1; // -1 means no member is expanded
+
+// Toggle function to expand or collapse the bio
+function toggleBio(index) {
+  expandedMember = expandedMember === index ? -1 : index;
+}
+
   
-    // Team member data, now with social links
-    let teamMembers = [
-      {
-        id: 1,
-        name: 'Alice Johnson',
-        role: 'Project Manager',
-        bio: 'Alice has over 10 years of experience...',
-        extendedBio: 'Alice leads with a passion for organization...',
-        image: '/images/Joe_Bremont.jpg',
-        website: 'https://alicejohnson.com',
-        github: 'https://github.com/alicejohnson',
-        linkedin: 'https://linkedin.com/in/alicejohnson'
-      },
-      {
-        id: 1,
-        name: 'Alice Johnson',
-        role: 'Project Manager',
-        bio: 'Alice has over 10 years of experience...',
-        extendedBio: 'Alice leads with a passion for organization...',
-        image: '/images/Joe_Bremont.jpg',
-        website: 'https://alicejohnson.com',
-        github: 'https://github.com/alicejohnson',
-        linkedin: 'https://linkedin.com/in/alicejohnson'
-      },
-      {
-        id: 1,
-        name: 'Alice Johnson',
-        role: 'Project Manager',
-        bio: 'Alice has over 10 years of experience...',
-        extendedBio: 'Alice leads with a passion for organization...',
-        image: '/images/Joe_Bremont.jpg',
-        website: 'https://alicejohnson.com',
-        github: 'https://github.com/alicejohnson',
-        linkedin: 'https://linkedin.com/in/alicejohnson'
-      }
-      // Add more team members here
-    ];
-    let selectedMember = null; // The team member to show in the modal
-  let isModalVisible = false;
-
-  // Function to open the modal with the selected member
-  function openModal(member) {
-    selectedMember = member;
-    isModalVisible = true;
-  }
-
-  // Function to close the modal
-  function closeModal() {
-    isModalVisible = false;
-    selectedMember = null;
-  }
 </script>
 
-<section class="team-page">
-    <h1 class = "team-heading">Meet the Team</h1>
-  <div class="team-grid">
-    {#each teamMembers as member}
-      <article class="team-member" on:click={() => openModal(member)}>
+
+<main class="team-page">
+  <h1>Meet the Team</h1>
+  <section class="team-grid">
+    {#each teamMembers as member, index}
+      <button 
+        type="button" 
+        class="team-member" 
+        on:click={() => toggleBio(index)} 
+        on:keydown={(e) => e.key === 'Enter' && toggleBio(index)}
+        aria-expanded={expandedMember === index}
+      >
         <img src={member.image} alt={member.name} class="member-image" />
         <h2>{member.name}</h2>
         <p class="role">{member.role}</p>
         <p class="bio">{member.bio}</p>
-        <p class="extended-bio">{member.extendedBio}</p>
-      </article>
-    {/each}
-  </div>
-</section>
 
-<Modal visible={isModalVisible} onClose={closeModal} member={selectedMember} />
+        {#if expandedMember === index}
+          <p class="extended-bio">{member.extendedBio}</p>
+        {/if}
+      </button>
+    {/each}
+  </section>
+</main>
+
 
 <style>
-  /* Fancy "Meet the Team" title */
-  .team-heading {
-    font-family: 'Lobster', cursive; /* Fancy script font */
-    font-size: 3rem;
-    color: #333;
-    letter-spacing: 2px;
-    margin-bottom: 2rem;
-    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 2s ease-out; /* Fade-in animation */
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-
   .team-page {
     padding: 2rem;
     text-align: center;
@@ -101,7 +73,7 @@
 
   .team-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Cards will fill available space */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 2rem;
     margin-top: 2rem;
   }
@@ -114,17 +86,15 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s;
     text-align: left;
   }
 
   .team-member:hover {
     transform: scale(1.10);
+
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
-  .team-member:hover .extended-bio {
-  display: block; /* Show on hover */
-}
 
   .member-image {
     width: 100%;
@@ -132,6 +102,7 @@
     border-radius: 50%;
     transition: transform 0.3s ease;
   }
+
 
   h2 {
     margin: 0.5rem 0;
@@ -150,7 +121,6 @@
   }
 
   .extended-bio {
-    display: none;
     color: #444;
     font-size: 0.85rem;
     margin-top: 0.5rem;

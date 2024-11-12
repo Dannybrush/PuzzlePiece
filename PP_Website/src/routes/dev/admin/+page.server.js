@@ -14,7 +14,7 @@ export const load = async () => {
   // If there's no session or an error, redirect to login page
   if (error || !session) {
     console.log('No valid session, redirecting...');
-    throw redirect(303, '/login');  // Redirect to login page
+    throw redirect(303, '/dev/admin/h4X0r');  // Redirect to login page
   }
 
   // Return session data if valid
