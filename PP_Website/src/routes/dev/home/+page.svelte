@@ -7,7 +7,7 @@
     <header class="header">
       <h1>Welcome to Our Website</h1>
       <p>Your one-stop destination to meet the team and learn about our project!</p>
-      <a href="/Team" class="cta-button">Meet the Team</a>
+      <a href="/dev/meet-the-team" class="cta-button">Meet the Team</a>
     </header>
   
     <nav class="navigation">
@@ -18,12 +18,10 @@
         <li><a href="/dev/admin/questions">questions</a></li>
         <li><a href="/dev/admin/users">users</a></li>
         <li><a href="/dev/meet-the-team">meet the team</a></li>
-        <li><a href="/dev/login">Supabase</a></li>
         <li><a href="/dev/login/signup">projects</a></li>
         <li><a href="/dev/login">login</a></li>
         <li><a href="/dev/supabase">supabase</a></li>
-        <li><a href="/about">about</a></li>
-        <li><a href="/api">api</a></li>
+        <li><a href="/dev/contact">contact</a></li>
       </ul>
     </nav>
   
@@ -37,8 +35,8 @@
     </footer>
   </section>
   
+  <style>
   /* Home Page Styles */
-  <style>/* Home Page Styles */
     .home-page {
       text-align: center;
       font-family: Arial, sans-serif;

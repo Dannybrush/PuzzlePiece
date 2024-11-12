@@ -40,7 +40,8 @@ function toggleBio(index) {
 
 
 <main class="team-page">
-  <h1>Meet the Team</h1>
+  <h1 class="fancy-heading">Meet the awesome Team</h1>
+
   <section class="team-grid">
     {#each teamMembers as member, index}
       <button 
@@ -127,4 +128,16 @@ function toggleBio(index) {
     border-top: 1px solid #ddd;
     padding-top: 0.5rem;
   }
+  /* Fancy Heading Style */
+.fancy-heading {
+  font-family: 'Playfair Display', serif; /* Use a fancy serif font */
+  font-size: 3rem; /* Make the font large */
+  color: #333; /* Dark gray color */
+  letter-spacing: 3px; /* Space out the letters */
+  text-transform: uppercase; /* Uppercase letters for emphasis */
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  margin-bottom: 1rem; /* Add some space below the heading */
+  font-weight: bold; /* Make the font bold */
+}
+
 </style>
