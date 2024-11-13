@@ -1,0 +1,42 @@
+/* src/styles/global.css */
+
+/* Font import from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+:root {
+  --primary-color: #03045E;
+  --secondary-color: #0077B6;
+  --accent-color: #00B4D8;
+  --background-color: #90E0EF;
+  --background-pattern: url('/images/background-pattern.png');
+  --font-family: 'Roboto', sans-serif;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  background-image: var(--background-pattern);
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.logo {
+  width: 100px;
+  height: auto;
+}
+
+.client-name {
+  font-size: 2rem;
+  font-weight: bold;
+}
