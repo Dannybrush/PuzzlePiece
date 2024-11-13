@@ -38,12 +38,16 @@
   // Fetch the initial puzzle on page load
   onMount(fetchPuzzle);
 
-  // Placeholder logic for puzzle validation
-  function submitGuess() {
+// Function to handle guess submission
+async function submitGuess() {
     if (userGuess.trim() === "") return;
-    isCorrect = userGuess === "correct answer"; // Replace with actual answer validation
+
+    // Check if user's guess matches the correct answer
+    isCorrect = userGuess.toLowerCase().trim() === puzzleData.answer.toLowerCase().trim();
     guessesRemaining--;
     userGuess = '';
+    
+    // Optional: Add additional logic here for handling correct/incorrect answers
   }
 
   // Function to handle next/previous question
@@ -96,12 +100,12 @@
       <button class="submit-btn" on:click={submitGuess}>Submit</button>
 
       {#if isCorrect === true}
-          <p class="feedback correct">Correct!</p>
-      {:else if isCorrect === false && guessesRemaining > 0}
-          <p class="feedback incorrect">Incorrect, {guessesRemaining} guesses remaining.</p>
-      {:else if guessesRemaining <= 0}
-          <p class="feedback incorrect">No more guesses. Try again tomorrow!</p>
-      {/if}
+      <p class="feedback correct">Correct!</p>
+    {:else if isCorrect === false && guessesRemaining > 0}
+      <p class="feedback incorrect">Incorrect, {guessesRemaining} guesses remaining.</p>
+    {:else if guessesRemaining <= 0}
+      <p class="feedback incorrect">No more guesses. Try again tomorrow!</p>
+    {/if}
   </div>
 </div>
 
